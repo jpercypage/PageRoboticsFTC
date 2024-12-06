@@ -25,17 +25,15 @@ public class roughDriveTrain extends OpMode {
     DcMotor armExtender;
 
     //method that sets motor stop behavior and direction in which it spins when set to go forward (see driver hub config file)
-    private void  initialize_motor(DcMotor motor, DcMotorSimple.Direction dir, DcMotor.ZeroPowerBehavior at_zero) {
+    private void initialize_motor(DcMotor motor, DcMotorSimple.Direction dir, DcMotor.ZeroPowerBehavior at_zero) {
 
         motor.setDirection(dir);
         motor.setZeroPowerBehavior(at_zero);
 
     }
 
-    @Override
-    public void init() {
+    private void wheel_init() {
 
-        //TODO: Push motor config to it's own method
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
         telemetry.addData("Front Left: ", "Initialized");
 
@@ -48,6 +46,17 @@ public class roughDriveTrain extends OpMode {
         rightRear = hardwareMap.get(DcMotor.class, "rightRear");
         telemetry.addData("Rear Right: ", "Initialized");
 
+    }
+
+
+
+    @Override
+    public void init() {
+
+        //all wheel motors are in here. (Carlo)
+        wheel_init();
+
+        //TODO: Change configurations to fit with new arm
         armHinge = hardwareMap.get(DcMotor.class, "armHinge");
         telemetry.addData("Arm: ", "Initialized");
 
@@ -57,6 +66,7 @@ public class roughDriveTrain extends OpMode {
         armExtender = hardwareMap.get(DcMotor.class, "armExtender");
         telemetry.addData("Extender: ", "Initialized");
 
+        //wheels zero power behavior
         DcMotor.ZeroPowerBehavior at_zero = DcMotor.ZeroPowerBehavior.BRAKE;
         initialize_motor(rightFront, DcMotorSimple.Direction.REVERSE, at_zero);
         initialize_motor(leftFront, DcMotorSimple.Direction.FORWARD, at_zero);
@@ -133,4 +143,4 @@ public class roughDriveTrain extends OpMode {
         leftRear.setPower(((forward-strafe+turn)) / 1.5);
         rightRear.setPower(((forward+strafe-turn)) / 1.5);
     }
-}
+}// end whole class
