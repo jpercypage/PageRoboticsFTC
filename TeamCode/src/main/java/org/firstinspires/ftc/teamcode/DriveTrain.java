@@ -14,7 +14,7 @@ public class DriveTrain {
     //arranged strafe, forward, turn
     float[] whlMotionVars = {0, 0, 0};
 
-    DriveTrain() {
+    public DriveTrain(HardwareMap hardwareMap) {
         
     };
 

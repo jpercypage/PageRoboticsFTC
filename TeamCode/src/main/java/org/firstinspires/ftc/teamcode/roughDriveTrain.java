@@ -28,10 +28,10 @@ public class roughDriveTrain extends OpMode {
 
         //wheels zero power behavior, it shouldn't change with the new version, hopefully
         DcMotor.ZeroPowerBehavior at_zero = DcMotor.ZeroPowerBehavior.BRAKE;
-        motor_set_zero(rightFront, DcMotorSimple.Direction.REVERSE, at_zero);
-        motor_set_zero(leftFront, DcMotorSimple.Direction.FORWARD, at_zero);
-        motor_set_zero(leftRear, DcMotorSimple.Direction.FORWARD, at_zero);
-        motor_set_zero(rightRear, DcMotorSimple.Direction.REVERSE, at_zero);
+        motor_set_direction(rightFront, DcMotorSimple.Direction.REVERSE);
+        motor_set_direction(leftFront, DcMotorSimple.Direction.FORWARD);
+        motor_set_direction(leftRear, DcMotorSimple.Direction.FORWARD);
+        motor_set_direction(rightRear, DcMotorSimple.Direction.REVERSE);
 
 
         telemetry.addData("All Systems: ", "Functional");
@@ -77,11 +77,11 @@ public class roughDriveTrain extends OpMode {
         rightRear.setPower(((forward+strafe-turn)) / 1.5);
 
     }//end method
-    private void motor_set_zero(DcMotor motor, DcMotorSimple.Direction dir, DcMotor.ZeroPowerBehavior at_zero) {
+    private void motor_set_direction(DcMotor motor, DcMotorSimple.Direction dir) {
 
         //method that sets motor stop behavior and direction in which it spins when set to go forward (see driver hub config file)
         motor.setDirection(dir);
-        motor.setZeroPowerBehavior(at_zero);
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
 

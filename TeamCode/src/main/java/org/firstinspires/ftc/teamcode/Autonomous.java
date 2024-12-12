@@ -2,14 +2,10 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.DriveTrain;
-
-@TeleOp(name = "Manual Mode")
-public class Main extends OpMode {
-
+@TeleOp(name = "Autonomous Mode")
+public class Autonomous extends OpMode {
     DriveTrain driveTrain;
     HardwareMap hardwareMap;
 
@@ -22,5 +18,4 @@ public class Main extends OpMode {
     public void loop() {
 
     }
-
 }
