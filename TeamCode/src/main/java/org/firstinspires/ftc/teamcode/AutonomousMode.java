@@ -9,10 +9,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.Blinker;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import java.util.List;
@@ -31,20 +28,13 @@ public class AutonomousMode extends LinearOpMode {
     final double MAX_AUTO_STRAFE= 0.5;   //  Clip the strafing speed to this max value
     final double MAX_AUTO_TURN  = 0.3;   //  Clip the turn speed to this max value
 
-    private Blinker control_Hub;
-    private Blinker expansion_Hub;
-    private DcMotor armHinge;
-    private Servo handServo;
     private DcMotor leftFront;
     private DcMotor rightFront;
     private DcMotor leftRear;
     private DcMotor rightRear;
     WebcamName camera; // webcam object
-    VisionPortal portal; // "vision portal object" (Carlo: I have no idea what this does fully yet)
 
-    private VisionPortal visionPortal;               // Used to manage the video source.
     private AprilTagProcessor aprilTag;
-
     private AprilTagDetection desiredTag = null;
 
 
@@ -74,7 +64,8 @@ public class AutonomousMode extends LinearOpMode {
 
         camera = hardwareMap.get(WebcamName.class, "Webcam");
 
-        visionPortal = new VisionPortal.Builder()
+        // Used to manage the video source.
+        VisionPortal visionPortal = new VisionPortal.Builder()
                 .setCamera(camera)
                 .addProcessor(aprilTag)
                 .build();
@@ -100,9 +91,9 @@ public class AutonomousMode extends LinearOpMode {
         telemetry.update();
 
         boolean targetFound     = false;    // Set to true when an AprilTag target is detected
-        double  drive           = 0;        // Desired forward power/speed (-1 to +1)
-        double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
-        double  turn            = 0;        // Desired turning power/speed (-1 to +1)
+        double  drive;                      // Desired forward power/speed (-1 to +1)
+        double  strafe;                     // Desired strafe power/speed (-1 to +1)
+        double  turn;                       // Desired turning power/speed (-1 to +1)
 
         //initMotors();
         initAprilTag();
