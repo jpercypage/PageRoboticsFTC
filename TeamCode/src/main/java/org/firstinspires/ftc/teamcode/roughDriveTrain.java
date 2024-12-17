@@ -84,10 +84,5 @@ public class roughDriveTrain extends OpMode {
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
-
-
-
-
-
-
+    
 }// end whole class
