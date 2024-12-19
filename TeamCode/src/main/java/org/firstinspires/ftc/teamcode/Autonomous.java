@@ -11,7 +11,7 @@ public class Autonomous extends OpMode {
 
     @Override
     public void init() {
-        driveTrain = new DriveTrain(hardwareMap);
+        driveTrain = new DriveTrain();
     }
 
     @Override
