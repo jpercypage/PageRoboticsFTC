@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 
 @TeleOp(
-        name = "Manual Mode V2"
+        name = "Manual Mode V3"
 )
 public class roughDriveTrain extends OpMode {
     DcMotor leftFront;
@@ -66,10 +66,10 @@ public class roughDriveTrain extends OpMode {
     }
 
     private void wheel_controls() {
-        this.leftFront.setPower((this.forward + this.strafe + this.turn) * 0.65D);
-        this.rightFront.setPower((this.forward - this.strafe - this.turn) * 0.65D);
-        this.leftRear.setPower((this.forward - this.strafe + this.turn) * 0.65D);
-        this.rightRear.setPower((this.forward + this.strafe - this.turn) * 0.65D);
+        this.leftFront.setPower((this.forward + this.strafe + this.turn) * 0.75D);
+        this.rightFront.setPower((this.forward - this.strafe - this.turn) * 0.75D);
+        this.leftRear.setPower((this.forward - this.strafe + this.turn) * 0.75D);
+        this.rightRear.setPower((this.forward + this.strafe - this.turn) * 0.75D);
     }
 
     private void motor_set_zero(DcMotor motor, Direction dir, ZeroPowerBehavior at_zero) {
