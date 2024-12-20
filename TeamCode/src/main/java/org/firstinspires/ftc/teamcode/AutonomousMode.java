@@ -8,14 +8,15 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.Range;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-
+@Autonomous(name = "Auto")
 public class AutonomousMode extends LinearOpMode {
 
 
@@ -28,10 +29,10 @@ public class AutonomousMode extends LinearOpMode {
     final double MAX_AUTO_STRAFE= 0.5;   //  Clip the strafing speed to this max value
     final double MAX_AUTO_TURN  = 0.3;   //  Clip the turn speed to this max value
 
-    private DcMotor leftFront;
-    private DcMotor rightFront;
-    private DcMotor leftRear;
-    private DcMotor rightRear;
+    DcMotor leftFront;
+    DcMotor rightFront;
+    DcMotor leftRear;
+    DcMotor rightRear;
     WebcamName camera; // webcam object
 
     private AprilTagProcessor aprilTag;
@@ -40,10 +41,10 @@ public class AutonomousMode extends LinearOpMode {
 
 
     private void initMotors() {
-        leftFront  = hardwareMap.get(DcMotor.class, "leftFront");
-        rightFront = hardwareMap.get(DcMotor.class, "rightFront");
-        leftRear  = hardwareMap.get(DcMotor.class, "leftRear");
-        rightRear = hardwareMap.get(DcMotor.class, "rightRear");
+        leftFront  = hardwareMap.get(DcMotor.class, "frontLeft");
+        rightFront = hardwareMap.get(DcMotor.class, "frontRight");
+        leftRear  = hardwareMap.get(DcMotor.class, "rearLeft");
+        rightRear = hardwareMap.get(DcMotor.class, "rearLeft");
     }
 
 
@@ -95,7 +96,19 @@ public class AutonomousMode extends LinearOpMode {
         double  strafe;                     // Desired strafe power/speed (-1 to +1)
         double  turn;                       // Desired turning power/speed (-1 to +1)
 
-        //initMotors();
+        initMotors();
+
+        moveRobot(-1, 0, 0);
+        try {
+            wait(100);
+        } catch (InterruptedException e) {
+            moveRobot(0, 0, 0);
+            throw new RuntimeException(e);
+        }
+
+
+
+
         initAprilTag();
 
         // Step through the list of detected tags and look for a matching tag
@@ -129,6 +142,13 @@ public class AutonomousMode extends LinearOpMode {
             moveRobot(drive, strafe, turn);
         }
 
+        //try {
+        //    moveRobot(0, 0, -1);
+        //    wait(100);
+        //} catch (InterruptedException e) {
+        //    throw new RuntimeException(e);
+        //}
+
 
     }
 
@@ -154,10 +174,10 @@ public class AutonomousMode extends LinearOpMode {
         }
 
         // Send powers to the wheels.
-        leftFront.setPower(leftFrontPower);
-        rightFront.setPower(rightFrontPower);
-        leftRear.setPower(leftRearPower);
-        rightRear.setPower(rightRearPower);
+        leftFront.setPower(-leftFrontPower);
+        rightFront.setPower(-rightFrontPower);
+        leftRear.setPower(-leftRearPower);
+        rightRear.setPower(-rightRearPower);
     }
 
 }
