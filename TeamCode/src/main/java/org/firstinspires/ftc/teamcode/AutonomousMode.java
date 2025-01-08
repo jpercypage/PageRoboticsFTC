@@ -69,14 +69,21 @@ public class AutonomousMode extends LinearOpMode {
         VisionPortal visionPortal = new VisionPortal.Builder()
                 .setCamera(camera)
                 .addProcessor(aprilTag)
+                .setAutoStartStreamOnBuild(true)
                 .build();
 
-        ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
-        exposureControl.setExposure(6, TimeUnit.MILLISECONDS);
-        //might need to add sleep
-        GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
-        gainControl.setGain(250);
-        //might need to add sleep
+        visionPortal.setProcessorEnabled(aprilTag, true);
+
+
+
+
+
+        //ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+        //exposureControl.setExposure(6, TimeUnit.MILLISECONDS);
+
+        //GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
+        //gainControl.setGain(250);
+
 
         telemetry.addData("System", "Running");
         telemetry.update();
@@ -98,58 +105,47 @@ public class AutonomousMode extends LinearOpMode {
 
         initMotors();
 
-        moveRobot(-1, 0, 0);
-        try {
-            wait(100);
-        } catch (InterruptedException e) {
-            moveRobot(0, 0, 0);
-            throw new RuntimeException(e);
-        }
 
 
 
 
         initAprilTag();
 
-        // Step through the list of detected tags and look for a matching tag
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-        for (AprilTagDetection detection : currentDetections) {
-            telemetry.addData("AprilTag: ", "Searching");
-            // Look to see if we have size info on this tag.
-            if (detection.metadata != null) {
+        waitForStart();
+        while (opModeIsActive()) {
+            // Step through the list of detected tags and look for a matching tag
+            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+            for (AprilTagDetection detection : currentDetections) {
+                telemetry.addData("AprilTag: ", "Searching");
+                // Look to see if we have size info on this tag.
+                if (detection.metadata != null) {
                     telemetry.addData("AprilTag: ", "AprilTag Found!!");
                     targetFound = true;
                     desiredTag = detection;
                     break;  // don't look any further
 
-            } else {
-                // This tag is NOT in the library, so we don't have enough information to track to it.
-                telemetry.addData("AprilTag: ", "detected april tag metadata == Null");
+                } else {
+                    // This tag is NOT in the library, so we don't have enough information to track to it.
+                    telemetry.addData("AprilTag: ", "detected april tag metadata == Null");
+                }
+                telemetry.update();
             }
-            telemetry.update();
+
+            if (targetFound) {
+                double rangeError = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
+                double headingError = desiredTag.ftcPose.bearing;
+                double yawError = desiredTag.ftcPose.yaw;
+
+
+                drive = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+                turn = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
+                strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+
+                moveRobot(drive, strafe, turn);
+            }
+
+
         }
-
-        if (targetFound) {
-            double  rangeError      = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
-            double  headingError    = desiredTag.ftcPose.bearing;
-            double  yawError        = desiredTag.ftcPose.yaw;
-
-
-            drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-            turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
-            strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
-
-            moveRobot(drive, strafe, turn);
-        }
-
-        //try {
-        //    moveRobot(0, 0, -1);
-        //    wait(100);
-        //} catch (InterruptedException e) {
-        //    throw new RuntimeException(e);
-        //}
-
-
     }
 
 
