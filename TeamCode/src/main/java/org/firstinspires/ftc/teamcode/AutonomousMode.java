@@ -38,6 +38,7 @@ public class AutonomousMode extends LinearOpMode {
     private AprilTagProcessor aprilTag;
     private AprilTagDetection desiredTag = null;
 
+    private VisionPortal visionPortal;
 
 
     private void initMotors() {
@@ -66,7 +67,7 @@ public class AutonomousMode extends LinearOpMode {
         camera = hardwareMap.get(WebcamName.class, "Webcam");
 
         // Used to manage the video source.
-        VisionPortal visionPortal = new VisionPortal.Builder()
+        visionPortal = new VisionPortal.Builder()
                 .setCamera(camera)
                 .addProcessor(aprilTag)
                 .setAutoStartStreamOnBuild(true)
@@ -112,6 +113,15 @@ public class AutonomousMode extends LinearOpMode {
         initAprilTag();
 
         waitForStart();
+
+        ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+        exposureControl.setExposure(6, TimeUnit.MILLISECONDS);
+
+        GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
+        gainControl.setGain(250);
+
+
+
         while (opModeIsActive()) {
             // Step through the list of detected tags and look for a matching tag
             List<AprilTagDetection> currentDetections = aprilTag.getDetections();
@@ -137,9 +147,15 @@ public class AutonomousMode extends LinearOpMode {
                 double yawError = desiredTag.ftcPose.yaw;
 
 
+
+
                 drive = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
                 turn = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
                 strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+
+
+
+
 
                 moveRobot(drive, strafe, turn);
             }
@@ -152,10 +168,10 @@ public class AutonomousMode extends LinearOpMode {
 
     private void moveRobot(double drive, double strafe, double turn) {
         // Calculate wheel powers.
-        double leftFrontPower    =  drive -strafe -turn;
-        double rightFrontPower   =  drive +strafe +turn;
-        double leftRearPower     =  drive +strafe -turn;
-        double rightRearPower    =  drive -strafe +turn;
+        double leftFrontPower    =  drive +strafe +turn;
+        double rightFrontPower   =  drive -strafe -turn;
+        double leftRearPower     =  drive -strafe +turn;
+        double rightRearPower    =  drive +strafe -turn;
 
         // Normalize wheel powers to be less than 1.0
         double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
@@ -168,6 +184,16 @@ public class AutonomousMode extends LinearOpMode {
             leftRearPower /= max;
             rightRearPower /= max;
         }
+
+
+        telemetry.addData("leftF: ", leftFrontPower);
+        telemetry.addData("leftR: ", leftRearPower);
+        telemetry.addData("rightF: ", rightFrontPower);
+        telemetry.addData("rightR: ", rightRearPower);
+
+
+        telemetry.update();
+
 
         // Send powers to the wheels.
         leftFront.setPower(-leftFrontPower);
