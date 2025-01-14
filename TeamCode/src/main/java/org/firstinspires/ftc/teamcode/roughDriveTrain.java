@@ -29,13 +29,16 @@ public class roughDriveTrain extends OpMode {
     public void init() {
         motor_init();
         hinge_init();
+
         bucket = hardwareMap.get(Servo.class, "bucket");
         telemetry.addData("Bucket Servo: ", "Initialized");
         ZeroPowerBehavior at_zero = ZeroPowerBehavior.BRAKE;
+
         motor_set_zero(rightFront, Direction.REVERSE, at_zero);
         motor_set_zero(leftFront, Direction.FORWARD, at_zero);
         motor_set_zero(leftRear, Direction.FORWARD, at_zero);
         motor_set_zero(rightRear, Direction.REVERSE, at_zero);
+
         telemetry.addData("All Systems: ", "Functional");
     }
 
@@ -49,16 +52,22 @@ public class roughDriveTrain extends OpMode {
     }
 
     private void motor_init() {
+
         leftFront = hardwareMap.get(DcMotor.class, "frontLeft");
         telemetry.addData("Front Left: ", "Initialized");
+
         rightFront = hardwareMap.get(DcMotor.class, "frontRight");
         telemetry.addData("Front Right: ", "Initialized");
+
         leftRear = hardwareMap.get(DcMotor.class, "rearLeft");
         telemetry.addData("Rear Left: ", "Initialized");
+
         rightRear = hardwareMap.get(DcMotor.class, "rearRight");
         telemetry.addData("Rear Right: ", "Initialized");
+
         liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
         telemetry.addData("Lift Motor: ", "Initialized");
+
         liftMotor.setMode(RunMode.STOP_AND_RESET_ENCODER);
     }
 
@@ -77,12 +86,16 @@ public class roughDriveTrain extends OpMode {
     private void hinge_init() {
         leftArmHinge = hardwareMap.get(Servo.class, "lHinge");
         telemetry.addData("Left Hinge: ", "Initialized");
+
         rightArmHinge = hardwareMap.get(Servo.class, "rHinge");
         telemetry.addData("Right Hinge: ", "Initialized");
-        leftArmHinge.setPosition(1.0D);
-        rightArmHinge.setPosition(1.0D);
+
         grabber = hardwareMap.get(Servo.class, "grabber");
         telemetry.addData("Grabber Servo: ", "Initialized");
+
+        leftArmHinge.setPosition(1.0D);
+        rightArmHinge.setPosition(1.0D);
+
     }
 
     private void hinge_control() {
@@ -97,6 +110,7 @@ public class roughDriveTrain extends OpMode {
         leftArmHinge.setPosition(position);
         rightArmHinge.setPosition(position);
         telemetry.addData("Position: ", position);
+
         if (gamepad2.left_bumper) {
             grabber.setPosition(1.0D);
         } else if (gamepad2.right_bumper) {
