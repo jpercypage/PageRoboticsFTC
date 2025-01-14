@@ -25,7 +25,6 @@ public class roughDriveTrain extends OpMode {
     private DcMotor liftMotor;
     private Servo bucket;
     private double position = 0.99D;
-    private final double HingeSpeed = 0.003D;
 
     public void init() {
         motor_init();
