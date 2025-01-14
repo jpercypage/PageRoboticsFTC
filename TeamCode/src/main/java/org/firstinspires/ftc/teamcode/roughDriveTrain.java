@@ -12,64 +12,62 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
         name = "Manual Mode V3"
 )
 public class roughDriveTrain extends OpMode {
-    DcMotor leftFront;
-    DcMotor rightFront;
-    DcMotor leftRear;
-    DcMotor rightRear;
-    double strafe;
-    double forward;
-    double turn;
-    Servo leftArmHinge;
-    Servo rightArmHinge;
-    Servo grabber;
-    DcMotor liftMotor;
-    double raising;
-    Servo bucket;
-    double lift;
-    double position = 0.99D;
-    final double HingeSpeed = 0.003D;
+    private DcMotor leftFront;
+    private DcMotor rightFront;
+    private DcMotor leftRear;
+    private DcMotor rightRear;
+    private double strafe;
+    private double forward;
+    private double turn;
+    private Servo leftArmHinge;
+    private Servo rightArmHinge;
+    private Servo grabber;
+    private DcMotor liftMotor;
+    private Servo bucket;
+    private double position = 0.99D;
+    private final double HingeSpeed = 0.003D;
 
     public void init() {
-        this.motor_init();
-        this.hinge_init();
-        this.bucket = (Servo)this.hardwareMap.get(Servo.class, "bucket");
-        this.telemetry.addData("Bucket Servo: ", "Initialized");
+        motor_init();
+        hinge_init();
+        bucket = hardwareMap.get(Servo.class, "bucket");
+        telemetry.addData("Bucket Servo: ", "Initialized");
         ZeroPowerBehavior at_zero = ZeroPowerBehavior.BRAKE;
-        this.motor_set_zero(this.rightFront, Direction.REVERSE, at_zero);
-        this.motor_set_zero(this.leftFront, Direction.FORWARD, at_zero);
-        this.motor_set_zero(this.leftRear, Direction.FORWARD, at_zero);
-        this.motor_set_zero(this.rightRear, Direction.REVERSE, at_zero);
-        this.telemetry.addData("All Systems: ", "Functional");
+        motor_set_zero(rightFront, Direction.REVERSE, at_zero);
+        motor_set_zero(leftFront, Direction.FORWARD, at_zero);
+        motor_set_zero(leftRear, Direction.FORWARD, at_zero);
+        motor_set_zero(rightRear, Direction.REVERSE, at_zero);
+        telemetry.addData("All Systems: ", "Functional");
     }
 
     public void loop() {
-        this.strafe = (double)this.gamepad1.left_stick_x;
-        this.forward = (double)(-this.gamepad1.left_stick_y);
-        this.turn = (double)this.gamepad1.right_stick_x;
-        this.wheel_controls();
-        this.hinge_control();
-        this.lift_control();
+        strafe = gamepad1.left_stick_x;
+        forward = -gamepad1.left_stick_y;
+        turn = gamepad1.right_stick_x;
+        wheel_controls();
+        hinge_control();
+        lift_control();
     }
 
     private void motor_init() {
-        this.leftFront = (DcMotor)this.hardwareMap.get(DcMotor.class, "frontLeft");
-        this.telemetry.addData("Front Left: ", "Initialized");
-        this.rightFront = (DcMotor)this.hardwareMap.get(DcMotor.class, "frontRight");
-        this.telemetry.addData("Front Right: ", "Initialized");
-        this.leftRear = (DcMotor)this.hardwareMap.get(DcMotor.class, "rearLeft");
-        this.telemetry.addData("Rear Left: ", "Initialized");
-        this.rightRear = (DcMotor)this.hardwareMap.get(DcMotor.class, "rearRight");
-        this.telemetry.addData("Rear Right: ", "Initialized");
-        this.liftMotor = (DcMotor)this.hardwareMap.get(DcMotor.class, "liftMotor");
-        this.telemetry.addData("Lift Motor: ", "Initialized");
-        this.liftMotor.setMode(RunMode.STOP_AND_RESET_ENCODER);
+        leftFront = hardwareMap.get(DcMotor.class, "frontLeft");
+        telemetry.addData("Front Left: ", "Initialized");
+        rightFront = hardwareMap.get(DcMotor.class, "frontRight");
+        telemetry.addData("Front Right: ", "Initialized");
+        leftRear = hardwareMap.get(DcMotor.class, "rearLeft");
+        telemetry.addData("Rear Left: ", "Initialized");
+        rightRear = hardwareMap.get(DcMotor.class, "rearRight");
+        telemetry.addData("Rear Right: ", "Initialized");
+        liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
+        telemetry.addData("Lift Motor: ", "Initialized");
+        liftMotor.setMode(RunMode.STOP_AND_RESET_ENCODER);
     }
 
     private void wheel_controls() {
-        this.leftFront.setPower((this.forward + this.strafe + this.turn) * 0.75D);
-        this.rightFront.setPower((this.forward - this.strafe - this.turn) * 0.75D);
-        this.leftRear.setPower((this.forward - this.strafe + this.turn) * 0.75D);
-        this.rightRear.setPower((this.forward + this.strafe - this.turn) * 0.75D);
+        leftFront.setPower((forward + strafe + turn) * 0.75D);
+        rightFront.setPower((forward - strafe - turn) * 0.75D);
+        leftRear.setPower((forward - strafe + turn) * 0.75D);
+        rightRear.setPower((forward + strafe - turn) * 0.75D);
     }
 
     private void motor_set_zero(DcMotor motor, Direction dir, ZeroPowerBehavior at_zero) {
@@ -78,55 +76,55 @@ public class roughDriveTrain extends OpMode {
     }
 
     private void hinge_init() {
-        this.leftArmHinge = (Servo)this.hardwareMap.get(Servo.class, "lHinge");
-        this.telemetry.addData("Left Hinge: ", "Initialized");
-        this.rightArmHinge = (Servo)this.hardwareMap.get(Servo.class, "rHinge");
-        this.telemetry.addData("Right Hinge: ", "Initialized");
-        this.leftArmHinge.setPosition(1.0D);
-        this.rightArmHinge.setPosition(1.0D);
-        this.grabber = (Servo)this.hardwareMap.get(Servo.class, "grabber");
-        this.telemetry.addData("Grabber Servo: ", "Initialized");
+        leftArmHinge = hardwareMap.get(Servo.class, "lHinge");
+        telemetry.addData("Left Hinge: ", "Initialized");
+        rightArmHinge = hardwareMap.get(Servo.class, "rHinge");
+        telemetry.addData("Right Hinge: ", "Initialized");
+        leftArmHinge.setPosition(1.0D);
+        rightArmHinge.setPosition(1.0D);
+        grabber = hardwareMap.get(Servo.class, "grabber");
+        telemetry.addData("Grabber Servo: ", "Initialized");
     }
 
     private void hinge_control() {
-        this.lift = (double)(-this.gamepad2.left_stick_y);
-        if (this.lift > 0.0D) {
-            this.position += 0.003D;
-        } else if (this.lift < 0.0D) {
-            this.position -= 0.003D;
+        double lift = -gamepad2.left_stick_y;
+        if (lift > 0.0D) {
+            position += 0.003D;
+        } else if (lift < 0.0D) {
+            position -= 0.003D;
         }
 
-        this.position = Math.max(0.0D, Math.min(1.0D, this.position));
-        this.leftArmHinge.setPosition(this.position);
-        this.rightArmHinge.setPosition(this.position);
-        this.telemetry.addData("Position: ", this.position);
-        if (this.gamepad2.left_bumper) {
-            this.grabber.setPosition(1.0D);
-        } else if (this.gamepad2.right_bumper) {
-            this.grabber.setPosition(0.0D);
+        position = Math.max(0.0D, Math.min(1.0D, position));
+        leftArmHinge.setPosition(position);
+        rightArmHinge.setPosition(position);
+        telemetry.addData("Position: ", position);
+        if (gamepad2.left_bumper) {
+            grabber.setPosition(1.0D);
+        } else if (gamepad2.right_bumper) {
+            grabber.setPosition(0.0D);
         } else {
-            this.grabber.setPosition(0.5D);
+            grabber.setPosition(0.5D);
         }
 
     }
 
     private void lift_control() {
-        this.raising = (double)(-this.gamepad2.right_stick_y);
-        this.liftMotor.setMode(RunMode.RUN_USING_ENCODER);
-        if (this.raising > 0.5D) {
-            this.liftMotor.setPower(this.raising / 2.5D);
-        } else if (this.raising < -0.5D) {
-            this.liftMotor.setPower(this.raising / 2.5D);
+        double raising =  -gamepad2.right_stick_y;
+        liftMotor.setMode(RunMode.RUN_USING_ENCODER);
+        if (raising > 0.5D) {
+            liftMotor.setPower(raising / 2.5D);
+        } else if (raising < -0.5D) {
+            liftMotor.setPower(raising / 2.5D);
         } else {
-            this.liftMotor.setPower(0.0D);
+            liftMotor.setPower(0.0D);
         }
 
-        if (this.gamepad2.left_trigger > 0.0F) {
-            this.bucket.setPosition(0.0D);
-        } else if (this.gamepad2.right_trigger > 0.0F) {
-            this.bucket.setPosition(1.0D);
+        if (gamepad2.left_trigger > 0.0F) {
+            bucket.setPosition(0.0D);
+        } else if (gamepad2.right_trigger > 0.0F) {
+            bucket.setPosition(1.0D);
         } else {
-            this.bucket.setPosition(0.5D);
+            bucket.setPosition(0.5D);
         }
 
     }
