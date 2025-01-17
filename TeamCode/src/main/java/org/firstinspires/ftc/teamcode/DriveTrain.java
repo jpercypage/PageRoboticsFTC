@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 @TeleOp(
         name = "Manual Mode V3"
 )
-public class roughDriveTrain extends OpMode {
+public class DriveTrain extends OpMode {
     private DcMotor leftFront;
     private DcMotor rightFront;
     private DcMotor leftRear;
@@ -69,6 +69,7 @@ public class roughDriveTrain extends OpMode {
         telemetry.addData("Lift Motor: ", "Initialized");
 
         liftMotor.setMode(RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
     }
 
     private void wheel_controls() {
@@ -109,7 +110,7 @@ public class roughDriveTrain extends OpMode {
         position = Math.max(0.0D, Math.min(1.0D, position));
         leftArmHinge.setPosition(position);
         rightArmHinge.setPosition(position);
-        telemetry.addData("Position: ", position);
+
 
         if (gamepad2.left_bumper) {
             grabber.setPosition(1.0D);
@@ -122,15 +123,23 @@ public class roughDriveTrain extends OpMode {
     }
 
     private void lift_control() {
-        double raising =  -gamepad2.right_stick_y;
-        liftMotor.setMode(RunMode.RUN_USING_ENCODER);
-        if (raising > 0.5D) {
-            liftMotor.setPower(raising / 2.5D);
-        } else if (raising < -0.5D) {
-            liftMotor.setPower(raising / 2.5D);
-        } else {
-            liftMotor.setPower(0.0D);
+
+        // Make sure string is tight and on the inside of spool before running
+
+
+        if (gamepad2.x) {
+            liftMotor.setTargetPosition(-4050);
+            liftMotor.setMode(RunMode.RUN_TO_POSITION);
+            liftMotor.setPower(0.5D);
+        } else if (gamepad2.b) {
+            liftMotor.setTargetPosition(0);
+            liftMotor.setMode(RunMode.RUN_TO_POSITION);
+            liftMotor.setPower(-0.3D);
         }
+
+        telemetry.addData("lift: ", liftMotor.getCurrentPosition());
+        telemetry.update();
+
 
         if (gamepad2.left_trigger > 0.0F) {
             bucket.setPosition(0.0D);
