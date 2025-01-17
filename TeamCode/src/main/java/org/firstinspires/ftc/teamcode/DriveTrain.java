@@ -17,9 +17,9 @@ public class DriveTrain extends OpMode {
     private BigBertha bigBertha;
 
     public void init() {
-        motors = new DriveMotors();
-        lift = new Lift();
-        bigBertha = new BigBertha();
+        motors = new DriveMotors(hardwareMap);
+        lift = new Lift(hardwareMap);
+        bigBertha = new BigBertha(hardwareMap, telemetry);
 
         telemetry.addData("Init: ", "Complete");
         telemetry.update();
@@ -46,9 +46,9 @@ public class DriveTrain extends OpMode {
 
         // raises and lowers the lift. Make sure string is tight and on the inside of spool before running
         if (gamepad2.x) {
-            lift.raise();
+            lift.raise(1);
         } else if (gamepad2.b) {
-            lift.lower();
+            lift.lower(0.9);
         }
         if (gamepad2.right_trigger > 0.0F) {
             lift.dump();

@@ -1,8 +1,12 @@
 package org.firstinspires.ftc.teamcode.components;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class BigBertha {
 
@@ -10,18 +14,20 @@ public class BigBertha {
     private final Servo rightArmHinge;
     private final Servo grabber;
 
+    private final Telemetry tele;
     private double position;
-    public BigBertha() {
+    public BigBertha(HardwareMap map, Telemetry tele) {
         try {
 
-            this.leftArmHinge = hardwareMap.get(Servo.class, "lHinge");
-            this.rightArmHinge = hardwareMap.get(Servo.class, "rHinge");
-            this.grabber = hardwareMap.get(Servo.class, "grabber");
+            this.leftArmHinge = map.get(Servo.class, "lHinge");
+            this.rightArmHinge = map.get(Servo.class, "rHinge");
+            this.grabber = map.get(Servo.class, "grabber");
 
         } catch (Exception e) {
             throw new RuntimeException(new Throwable("Failed to init BigBertha. Check connections or configuration naming"));
         }
-
+        this.tele = tele;
+        this.position = 0.8D;
         this.leftArmHinge.setPosition(1.0D);
         this.rightArmHinge.setPosition(1.0D);
     }
@@ -37,7 +43,10 @@ public class BigBertha {
             this.position -= 0.003D;
         }
 
-        this.position = Math.max(0.0D, Math.min(1.0D, position));
+        this.tele.addData("ServoPos:", this.rightArmHinge.getPosition());
+        this.tele.update();
+
+        this.position = Math.max(0.3D, Math.min(0.8D, position));
 
         this.leftArmHinge.setPosition(position);
         this.rightArmHinge.setPosition(position);

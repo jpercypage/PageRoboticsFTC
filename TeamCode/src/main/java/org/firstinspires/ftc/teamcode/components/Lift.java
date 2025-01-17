@@ -3,16 +3,17 @@ package org.firstinspires.ftc.teamcode.components;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Lift {
 
     private final DcMotor liftMotor;
     private final Servo bucket;
-    public Lift() {
+    public Lift(HardwareMap map) {
         try {
-            this.liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
-            this.bucket = hardwareMap.get(Servo.class, "bucket");
+            this.liftMotor = map.get(DcMotor.class, "liftMotor");
+            this.bucket = map.get(Servo.class, "bucket");
         } catch (Exception e) {
             throw new RuntimeException(new Throwable("lift or bucket motor couldn't initialize. Check connections or configuration naming"));
         }
@@ -73,7 +74,7 @@ public class Lift {
      * Resets the bucket after dump
      */
     public void resetBucket() {
-        this.bucket.setPosition(0D);
+        this.bucket.setPosition(0.5D);
     }
 
 }
