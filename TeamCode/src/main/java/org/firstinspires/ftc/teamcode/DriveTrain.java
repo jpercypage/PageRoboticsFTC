@@ -55,6 +55,11 @@ public class DriveTrain extends OpMode {
         } else {
             lift.resetBucket();
         }
+
+        if (gamepad2.y) {
+            motors.driveFeet(1D);
+        }
+
     }
 }
 

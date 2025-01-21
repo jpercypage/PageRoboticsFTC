@@ -27,6 +27,8 @@ public class DriveMotors {
         }
 
 
+
+
         getMotor("rightFront").setDirection(DcMotorSimple.Direction.REVERSE);
         getMotor("rightRear").setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -65,9 +67,23 @@ public class DriveMotors {
     }
 
 
-    public void driveFeet(double feet, double speed) {
-        for (DcMotor motor : motors.values()) {
-            motor.setPower(speed);
+    public void driveFeet(double feet) {
+
+        for (String motor : this.motors.keySet()) {
+            getMotor(motor).setTargetPosition(getMotor(motor).getCurrentPosition() + 1000);
+            getMotor(motor).setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+
+        getMotor("rightFront").setDirection(DcMotorSimple.Direction.REVERSE);
+        getMotor("rightRear").setDirection(DcMotorSimple.Direction.REVERSE);
+
+        for (String motor : this.motors.keySet()) {
+            getMotor(motor).setPower(0.5D);
+        }
+
+
+        for (String motor : this.motors.keySet()) {
+            getMotor(motor).setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
     }

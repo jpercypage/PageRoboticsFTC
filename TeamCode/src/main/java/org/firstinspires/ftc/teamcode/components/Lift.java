@@ -70,11 +70,17 @@ public class Lift {
         this.bucket.setPosition(1.0D);
     }
 
+
     /**
      * Resets the bucket after dump
      */
     public void resetBucket() {
         this.bucket.setPosition(0.5D);
     }
+
+
+
+
+
 
 }
