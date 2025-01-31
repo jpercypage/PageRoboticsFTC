@@ -12,6 +12,12 @@ import java.util.Objects;
 
 public class DriveMotors {
 
+    public enum DriveType {Auto, Tele}
+    private int ticksPerRev = 1120;
+    private double ticksPerInch = 1120 / 9.27636;
+
+    private double ticksPerDegree = 32.777;
+
     private final HashMap<String, DcMotor> motors = new HashMap<>();
 
     public DriveMotors(HardwareMap map) {
@@ -26,11 +32,37 @@ public class DriveMotors {
             throw new RuntimeException(e);
         }
 
+        getMotor("rightFront").setDirection(DcMotorSimple.Direction.REVERSE);
+        getMotor("rightRear").setDirection(DcMotorSimple.Direction.REVERSE);
+    }
+
+    public DriveMotors(HardwareMap map, DriveType mode) {
+        try {
+            // take in hardware map as param and then use that instead of our own
+            this.motors.put("leftFront", map.get(DcMotor.class, "frontLeft"));
+            this.motors.put("rightFront", map.get(DcMotor.class, "frontRight"));
+            this.motors.put("leftRear", map.get(DcMotor.class, "rearLeft"));
+            this.motors.put("rightRear", map.get(DcMotor.class, "rearRight"));
+        } catch (Exception e) {
+            throw new RuntimeException(new Throwable("Failed to init DriveMotors. Check connections or configuration naming"));
+
+        }
+
+
+        for (DcMotor motor: motors.values()) {
+            if (mode == DriveType.Auto) {
+                motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            } else {
+                motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
+        }
 
         getMotor("rightFront").setDirection(DcMotorSimple.Direction.REVERSE);
         getMotor("rightRear").setDirection(DcMotorSimple.Direction.REVERSE);
 
     }
+
+
 
     /**
      * drives with a custom speed
@@ -65,9 +97,25 @@ public class DriveMotors {
     }
 
 
-    public void driveFeet(double feet, double speed) {
+    public void drive(double distance) {
         for (DcMotor motor : motors.values()) {
-            motor.setPower(speed);
+            motor.setTargetPosition(motor.getCurrentPosition() + (int)(ticksPerInch * distance));
+            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            motor.setPower(0.3);
+        }
+    }
+
+    //Right
+    public void rotate(double degrees) {
+
+        for (DcMotor motor : motors.values()) {
+            if (motor.getDirection() == DcMotorSimple.Direction.REVERSE) {
+                motor.setTargetPosition(motor.getCurrentPosition() + (int) -(ticksPerDegree * degrees));
+            } else {
+                motor.setTargetPosition(motor.getCurrentPosition() + (int) (ticksPerDegree * degrees));
+            }
+            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            motor.setPower(0.3);
         }
 
     }
