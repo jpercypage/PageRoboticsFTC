@@ -4,20 +4,20 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.components.BigBertha;
-import org.firstinspires.ftc.teamcode.components.DriveMotors;
 import org.firstinspires.ftc.teamcode.components.Lift;
+import org.firstinspires.ftc.teamcode.components.driveModes.DriveMotorsTELE;
 
 @TeleOp(
         name = "Manual Mode V3"
 )
 public class DriveTrain extends OpMode {
 
-    private DriveMotors motors;
+    private DriveMotorsTELE motors;
     private Lift lift;
     private BigBertha bigBertha;
 
     public void init() {
-        motors = new DriveMotors(hardwareMap);
+        motors = new DriveMotorsTELE(hardwareMap);
         lift = new Lift(hardwareMap);
         bigBertha = new BigBertha(hardwareMap, telemetry);
 
@@ -54,10 +54,6 @@ public class DriveTrain extends OpMode {
             lift.dump();
         } else {
             lift.resetBucket();
-        }
-
-        if (gamepad2.y) {
-            motors.driveFeet(1D);
         }
 
     }

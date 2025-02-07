@@ -4,7 +4,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.components.DriveMotors;
+import org.firstinspires.ftc.teamcode.components.driveModes.DriveMotorsAUTO;
 
 @Autonomous(name = "Auto")
 public class AutonomousMode extends LinearOpMode {
@@ -12,13 +12,16 @@ public class AutonomousMode extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        DriveMotors motors = new DriveMotors(hardwareMap, DriveMotors.DriveType.Auto);
+        DriveMotorsAUTO motors = new DriveMotorsAUTO(hardwareMap);
 
         waitForStart();
+
+        // Actions //
+        motors.drive(12);
         motors.rotate(90);
 
-        while(opModeIsActive()) {
-            int three = 1 + 1;
-        }
+
+        // RUN //
+        motors.run();
     }
 }
