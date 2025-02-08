@@ -16,6 +16,8 @@ public class BigBertha {
 
     private final Telemetry tele;
     private double position;
+
+    //constructor
     public BigBertha(HardwareMap map, Telemetry tele) {
         try {
 

@@ -2,9 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
 import org.firstinspires.ftc.teamcode.components.BigBertha;
-import org.firstinspires.ftc.teamcode.components.Lift;
+import org.firstinspires.ftc.teamcode.components.lifts.LiftTELE;
 import org.firstinspires.ftc.teamcode.components.driveModes.DriveMotorsTELE;
 
 @TeleOp(
@@ -13,12 +12,12 @@ import org.firstinspires.ftc.teamcode.components.driveModes.DriveMotorsTELE;
 public class DriveTrain extends OpMode {
 
     private DriveMotorsTELE motors;
-    private Lift lift;
+    private LiftTELE lift;
     private BigBertha bigBertha;
 
     public void init() {
         motors = new DriveMotorsTELE(hardwareMap);
-        lift = new Lift(hardwareMap);
+        lift = new LiftTELE(hardwareMap, telemetry);
         bigBertha = new BigBertha(hardwareMap, telemetry);
 
         telemetry.addData("Init: ", "Complete");
@@ -46,7 +45,7 @@ public class DriveTrain extends OpMode {
 
         // raises and lowers the lift. Make sure string is tight and on the inside of spool before running
         if (gamepad2.x) {
-            lift.raise(1);
+            lift.raise();
         } else if (gamepad2.b) {
             lift.lower(0.9);
         }

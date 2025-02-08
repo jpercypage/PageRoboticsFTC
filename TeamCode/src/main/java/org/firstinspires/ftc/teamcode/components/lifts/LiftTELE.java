@@ -30,25 +30,12 @@ public class LiftTELE {
      */
     public void raise() {
 
-        this.liftMotor.setTargetPosition(-4050);
+        this.liftMotor.setTargetPosition(-3800);
         this.liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.liftMotor.setPower(0.5D);
+        this.liftMotor.setPower(1D);
     }
 
-    /**
-     * Raises the lift to the top
-     * @param speed (Optional) determines the speed for raising the lift. 0.0 - 1.0  default is 0.5
-     */
-    public void raise(double speed) {
-        this.telemetry.addData("Lift: ", this.liftMotor.getCurrentPosition());
 
-        this.liftMotor.setTargetPosition(-4050);
-        this.liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.liftMotor.setPower(speed);
-
-        this.telemetry.update();
-
-    }
 
     /**
      * lowers the lift to the bottom

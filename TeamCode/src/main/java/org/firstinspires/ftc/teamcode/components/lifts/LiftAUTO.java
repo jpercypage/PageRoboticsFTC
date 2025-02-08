@@ -3,11 +3,12 @@ package org.firstinspires.ftc.teamcode.components.lifts;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.configuration.ServoHubConfiguration;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+
 
 public class LiftAUTO {
 
@@ -20,6 +21,12 @@ public class LiftAUTO {
     private final char RAISE = 'r';
     private final char DUMP = 'd';
     private final char RESET = 'c';
+    private final int NONE = 0;
+    private final int LIFT = 1;
+    private final int BUCKET = 2;
+    private final int RESETBUCKET = 3;
+
+    private ServoHubConfiguration hub = new ServoHubConfiguration();
     private ArrayList<Character> Actions = new ArrayList<Character>();
     public LiftAUTO(HardwareMap map, Telemetry telemetry) {
         try {
@@ -32,8 +39,7 @@ public class LiftAUTO {
 
         this.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        this.telemetry.addData("Lift: ", this.liftMotor.getCurrentPosition());
-        this.telemetry.update();
+
     }
 
 
@@ -43,6 +49,7 @@ public class LiftAUTO {
     public void raise() {
         this.Actions.add(RAISE);
     }
+
 
     /**
      * Dumps the bucket
@@ -67,7 +74,7 @@ public class LiftAUTO {
 
     private void RUNraise() {
 
-        this.liftMotor.setTargetPosition(-4050);
+        this.liftMotor.setTargetPosition(-3650);
         this.liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.liftMotor.setPower(1);
 
@@ -97,10 +104,10 @@ public class LiftAUTO {
         return true;
     }
 
-    private boolean bucketFinished() {
+    private boolean bucketFinished(double d) {
         boolean flag = true;
         while(flag) {
-            if (this.bucket.getPosition() == 1.0D || this.bucket.getPosition() == 0.5D) {
+            if (this.bucket.getController().getServoPosition(this.bucket.getPortNumber()) == d) {
                 flag = false;
             }
         }
@@ -109,45 +116,48 @@ public class LiftAUTO {
 
 
     public void run() {
-        int index = 0;
+
         boolean waiting = false;
-        int type = 0;
+        int index = 0;
+        int type = NONE;
         while (index <= this.Actions.size() - 1) {
 
             if (!waiting) {
                 char action = this.Actions.get(index);
 
-
                 if (action == RAISE) {
                     this.RUNraise();
-                    type = 1;
+                    type = LIFT;
 
                 } else if (action == LOWER) {
                     this.RUNlower();
-                    type = 1;
+                    type = LIFT;
+
                 } else if (action == DUMP) {
                     this.RUNdump();
-                    type = 2;
+                    type = BUCKET;
+
                 } else if (action == RESET) {
                     this.RUNresetBucket();
-                    type = 2;
+                    type = RESETBUCKET;
                 }
 
-
                 waiting = true;
-            } else if (type == 1 && this.liftFinished()) {
+            } else if (type == LIFT && this.liftFinished()) {
                 waiting = false;
-                index += 1;
-            } else if (type == 2 && this.bucketFinished()) {
+                type = NONE;
+                index ++;
+
+            } else if (type == BUCKET && this.bucketFinished(1.0D)) {
                 waiting = false;
-                index += 1;
+                type = NONE;
+                index++;
+
+            } else if (type == RESETBUCKET && this.bucketFinished(0.5D)) {
+                waiting = false;
+                type = NONE;
+                index++;
             }
         }
     }
 }
-
-
-
-
-
-

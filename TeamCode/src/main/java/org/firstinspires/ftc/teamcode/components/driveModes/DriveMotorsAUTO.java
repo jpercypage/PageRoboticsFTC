@@ -13,16 +13,13 @@ public class DriveMotorsAUTO {
     private final int ticksPerRev = 1120;
     private final double ticksPerInch = 1120 / 9.27636;
 
-    private final double ticksPerDegree = 32.777;
+    private final double ticksPerDegree = 30.05;
 
     private final HashMap<String, DcMotor> motors = new HashMap<>();
 
     private final int BufferZone = 50;
 
     private ArrayList<String> Actions = new ArrayList<String>();
-
-
-
 
     public DriveMotorsAUTO(HardwareMap map) {
         try {
@@ -46,13 +43,16 @@ public class DriveMotorsAUTO {
 
     }
 
+    /**
+     @param distance Measures in Inches
+     */
     public void drive(double distance) {
         this.Actions.add("drive:" + distance);
     }
 
-
-
-
+    /**
+        @param degrees Using Degrees. Positive = clockwise, Negative = counter-clockwise
+     */
     public void rotate(double degrees) {
         this.Actions.add("rotate:" + degrees);
     }
@@ -61,7 +61,9 @@ public class DriveMotorsAUTO {
         for (DcMotor motor : motors.values()) {
             motor.setTargetPosition(motor.getCurrentPosition() + (int) (ticksPerInch * distance));
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            motor.setPower(0.3);
+
+            motor.setPower(0.6);
+
         }
     }
 
@@ -80,6 +82,7 @@ public class DriveMotorsAUTO {
     }
 
 
+
     public void run() {
         int index = 0;
         boolean waiting = false;
@@ -88,7 +91,6 @@ public class DriveMotorsAUTO {
             if (!waiting) {
                 String action = this.Actions.get(index).split(":")[0];
                 double value = Double.parseDouble(this.Actions.get(index).split(":")[1]);
-
 
                 if (action.contains("rotate")) {
                     this.RUNrotate(value);
