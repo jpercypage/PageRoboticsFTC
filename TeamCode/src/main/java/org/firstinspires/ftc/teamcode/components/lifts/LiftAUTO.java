@@ -16,7 +16,7 @@ public class LiftAUTO {
     private final DcMotor liftMotor;
     private final Servo bucket;
 
-    private final int BufferZone = 50;
+    private final int BufferZone = 25;
     private final char LOWER = 'l';
     private final char RAISE = 'r';
     private final char DUMP = 'd';
@@ -74,7 +74,7 @@ public class LiftAUTO {
 
     private void RUNraise() {
 
-        this.liftMotor.setTargetPosition(-3650);
+        this.liftMotor.setTargetPosition(-3900);
         this.liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.liftMotor.setPower(1);
 
@@ -159,5 +159,6 @@ public class LiftAUTO {
                 index++;
             }
         }
+        this.Actions.clear();
     }
 }

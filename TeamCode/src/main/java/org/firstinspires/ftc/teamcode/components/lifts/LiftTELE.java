@@ -30,7 +30,7 @@ public class LiftTELE {
      */
     public void raise() {
 
-        this.liftMotor.setTargetPosition(-3800);
+        this.liftMotor.setTargetPosition(-3900);
         this.liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.liftMotor.setPower(1D);
     }
@@ -76,7 +76,9 @@ public class LiftTELE {
         this.bucket.setPosition(0.5D);
     }
 
-
+    public boolean isLiftUp() {
+        return (this.liftMotor.getCurrentPosition() < -3700);
+    }
 
 
 

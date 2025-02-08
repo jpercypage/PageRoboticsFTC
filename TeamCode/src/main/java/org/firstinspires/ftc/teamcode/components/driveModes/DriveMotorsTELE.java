@@ -39,30 +39,19 @@ public class DriveMotorsTELE {
          * @param strafe  -1.00 = max left. : 1.00 = max right.
          * @param turn    -1.00 = rotate max left. : 1.00 = rotate max right.
          */
-        public void controls(double forward, double strafe, double turn) {
+        public void controls(double forward, double strafe, double turn, boolean isLiftUp) {
 
-            getMotor("leftFront").setPower((forward + strafe + turn) * 0.75D);
-            getMotor("rightFront").setPower((forward - strafe - turn) * 0.75D);
-            getMotor("leftRear").setPower((forward - strafe + turn) * 0.75D);
-            getMotor("rightRear").setPower((forward + strafe - turn) * 0.75D);
-        }
-
-
-        /**
-         * drives with a custom speed
-         *
-         * @param forward -1.00 = max backwards. : 1.00 = max forwards.
-         * @param strafe  -1.00 = max left. : 1.00 = max right.
-         * @param turn    -1.00 = rotate max left. : 1.00 = rotate max right.
-         * @param speed   0.00 = no movement. : 1.00 = full speed. Default value is 0.75. Full speed is not recommended.
-         */
-        public void controls(double forward, double strafe, double turn, double speed) {
-
+            double speed = 1.0D;
+            if (isLiftUp) {
+                speed = 0.25D;
+            }
             getMotor("leftFront").setPower((forward + strafe + turn) * speed);
             getMotor("rightFront").setPower((forward - strafe - turn) * speed);
             getMotor("leftRear").setPower((forward - strafe + turn) * speed);
             getMotor("rightRear").setPower((forward + strafe - turn) * speed);
         }
+
+
 
         private DcMotor getMotor(String motor) {
             return Objects.requireNonNull(this.motors.get(motor));

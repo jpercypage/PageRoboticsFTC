@@ -29,9 +29,8 @@ public class BigBertha {
             throw new RuntimeException(new Throwable("Failed to init BigBertha. Check connections or configuration naming"));
         }
         this.tele = tele;
-        this.position = 0.8D;
-        this.leftArmHinge.setPosition(1.0D);
-        this.rightArmHinge.setPosition(1.0D);
+        this.position = this.leftArmHinge.getPosition();
+
     }
 
     /**
@@ -40,18 +39,17 @@ public class BigBertha {
      */
     public void controls(double lift) {
         if (lift > 0.0D) {
-            this.position += 0.003D;
-        } else if (lift < 0.0D) {
             this.position -= 0.003D;
+        } else if (lift < 0.0D) {
+            this.position += 0.003D;
         }
 
-        this.tele.addData("ServoPos:", this.rightArmHinge.getPosition());
-        this.tele.update();
 
-        this.position = Math.max(0.3D, Math.min(0.8D, position));
-
-        this.leftArmHinge.setPosition(position);
-        this.rightArmHinge.setPosition(position);
+        if (lift != 0.0D) {
+            this.position = Math.max(0.3D, Math.min(0.8D, position));
+            this.leftArmHinge.setPosition(position);
+            this.rightArmHinge.setPosition(position);
+        }
     }
 
     /**
@@ -74,4 +72,11 @@ public class BigBertha {
     public void stop() {
         this.grabber.setPosition(0.5D);
     }
+
+    public void setPosition(double pos) {
+        this.position = pos;
+        this.leftArmHinge.setPosition(position);
+        this.rightArmHinge.setPosition(position);
+    }
 }
+

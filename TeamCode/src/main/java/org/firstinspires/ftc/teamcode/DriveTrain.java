@@ -29,7 +29,7 @@ public class DriveTrain extends OpMode {
         double forward = -gamepad1.left_stick_y;
         double turn = gamepad1.right_stick_x;
         //Handles driving
-        motors.controls(forward, strafe, turn);
+        motors.controls(forward, strafe, turn, this.lift.isLiftUp());
 
         //Handles BigBertha lowering and raising
         bigBertha.controls(-gamepad2.left_stick_y);
