@@ -3,9 +3,11 @@ package org.firstinspires.ftc.teamcode.components.lifts;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.configuration.ServoHubConfiguration;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+import utils.timer;
+
 
 import java.util.ArrayList;
 
@@ -17,17 +19,13 @@ public class LiftAUTO {
     private final Servo bucket;
 
     private final int BufferZone = 25;
-    private final char LOWER = 'l';
-    private final char RAISE = 'r';
-    private final char DUMP = 'd';
-    private final char RESET = 'c';
-    private final int NONE = 0;
-    private final int LIFT = 1;
-    private final int BUCKET = 2;
-    private final int RESETBUCKET = 3;
+    private enum actionType {
+        RAISE,
+        LOWER,
+        DUMP,
+    }
 
-    private ServoHubConfiguration hub = new ServoHubConfiguration();
-    private ArrayList<Character> Actions = new ArrayList<Character>();
+    private ArrayList<actionType> Actions = new ArrayList<actionType>();
     public LiftAUTO(HardwareMap map, Telemetry telemetry) {
         try {
             this.telemetry = telemetry;
@@ -47,7 +45,7 @@ public class LiftAUTO {
      * Raises the lift to the top
      */
     public void raise() {
-        this.Actions.add(RAISE);
+        this.Actions.add(actionType.RAISE);
     }
 
 
@@ -55,21 +53,15 @@ public class LiftAUTO {
      * Dumps the bucket
      */
     public void dump() {
-        this.Actions.add(DUMP);
+        this.Actions.add(actionType.DUMP);
     }
 
-    /**
-     * Resets the bucket after dump
-     */
-    public void reset() {
-        this.Actions.add(RESET);
-    }
 
     /**
      * lowers the lift to the bottom
      */
     public void lower() {
-        this.Actions.add(LOWER);
+        this.Actions.add(actionType.LOWER);
     }
 
     private void RUNraise() {
@@ -90,7 +82,7 @@ public class LiftAUTO {
     private void RUNdump() {
         this.bucket.setPosition(1.0D);
     }
-    private void RUNresetBucket() {
+    private void resetBucket() {
         this.bucket.setPosition(0.5D);
     }
 
@@ -98,16 +90,7 @@ public class LiftAUTO {
         boolean flag = true;
         while(flag) {
             if (this.liftMotor.getCurrentPosition() >= this.liftMotor.getTargetPosition() - (BufferZone) && this.liftMotor.getCurrentPosition() <= this.liftMotor.getTargetPosition() + (BufferZone)) {
-                flag = false;
-            }
-        }
-        return true;
-    }
-
-    private boolean bucketFinished(double d) {
-        boolean flag = true;
-        while(flag) {
-            if (this.bucket.getController().getServoPosition(this.bucket.getPortNumber()) == d) {
+                this.liftMotor.setPower(0);
                 flag = false;
             }
         }
@@ -119,44 +102,27 @@ public class LiftAUTO {
 
         boolean waiting = false;
         int index = 0;
-        int type = NONE;
+        actionType action = null;
         while (index <= this.Actions.size() - 1) {
 
             if (!waiting) {
-                char action = this.Actions.get(index);
+                action = this.Actions.get(index);
 
-                if (action == RAISE) {
-                    this.RUNraise();
-                    type = LIFT;
-
-                } else if (action == LOWER) {
-                    this.RUNlower();
-                    type = LIFT;
-
-                } else if (action == DUMP) {
-                    this.RUNdump();
-                    type = BUCKET;
-
-                } else if (action == RESET) {
-                    this.RUNresetBucket();
-                    type = RESETBUCKET;
+                switch (action) {
+                    case RAISE: RUNraise();
+                    case DUMP: RUNdump();
+                    case LOWER: RUNlower();
                 }
 
                 waiting = true;
-            } else if (type == LIFT && this.liftFinished()) {
+            } else if (action != actionType.DUMP && this.liftFinished()) {
+                    waiting = false;
+                    index ++;
+
+            } else {
+                timer.waitish(1);
                 waiting = false;
-                type = NONE;
                 index ++;
-
-            } else if (type == BUCKET && this.bucketFinished(1.0D)) {
-                waiting = false;
-                type = NONE;
-                index++;
-
-            } else if (type == RESETBUCKET && this.bucketFinished(0.5D)) {
-                waiting = false;
-                type = NONE;
-                index++;
             }
         }
         this.Actions.clear();
