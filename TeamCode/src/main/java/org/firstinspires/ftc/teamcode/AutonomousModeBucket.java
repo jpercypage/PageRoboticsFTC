@@ -16,47 +16,37 @@ public class AutonomousModeBucket extends LinearOpMode {
     public void runOpMode() {
 
         //initializations
-        DriveMotorsAUTO motors = new DriveMotorsAUTO(hardwareMap);
+        DriveMotorsAUTO motors = new DriveMotorsAUTO(hardwareMap, telemetry);
         BigBertha bertha = new BigBertha(hardwareMap, telemetry);
         LiftAUTO lift = new LiftAUTO(hardwareMap, telemetry);
-
 
         waitForStart();
 
 
-        lift.reset();
-        lift.run();
 
+        /* old auto code 100% working
         motors.drive(8);
         motors.strafe(-45);
         motors.rotate(45);
         motors.run();
+        */
+
+        // new auto code ¯\_(ツ)_/¯ if works yet
+        motors.drive(5);
+        motors.rotate(90);
+        motors.driveToTag();
+        motors.rotate(-45);
+        motors.drive(-2);
+        motors.run();
 
         lift.raise();
         lift.dump();
+        lift.lower();
         lift.run();
 
-        //do not remove
-        long jank = 0;
-        while(opModeIsActive()) {
-            jank += 1;
-            if (jank >= 353500) {
-                lift.reset();
-                lift.lower();
-                lift.run();
-
-                motors.drive(20);
-                motors.rotate(-45);
-                motors.strafe(35);
-                //motors.rotate(90);
-                //motors.drive(14);
-
-                motors.run();
 
 
 
-                jank = -10000000000000000L;
-            }// end if statement
-        }//end while loop
-    }//end run opp mode
-}//end class
+
+    }
+}
