@@ -4,32 +4,47 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.components.Camera;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
+import javax.xml.transform.dom.DOMLocator;
+
 public class DriveMotorsAUTO {
 
-    private final int ticksPerRev = 1120;
-    private final double ticksPerInch = 1120 / 9.27636;
+    final int ticksPerRev = 1120;
+    final double ticksPerInch = 1120 / 9.27636;
 
-    private final double ticksPerDegree = 30.05;
+    double ticksPerDegree = 30.05;
 
-    private final DcMotor[] motors = new DcMotor[4];
+    final DcMotor[] motors = new DcMotor[4];
 
-    private final int BufferZone = 75;
+    final int BufferZone = 75;
 
-    private enum motorType {
+    Camera camera = null;
+    enum motorType {
             LEFTFRONT,
             RIGHTFRONT,
             RIGHTREAR,
             LEFTREAR,
 
-
     };
-    private ArrayList<String> Actions = new ArrayList<String>();
 
-    public DriveMotorsAUTO(HardwareMap map) {
+    enum actionType {
+        DRIVE,
+        ROTATE,
+        STRAFE
+    }
+
+    ArrayList<Double> ActionValues = new ArrayList<Double>();
+
+    ArrayList<actionType> Actions = new ArrayList<actionType>();
+
+    public DriveMotorsAUTO(HardwareMap map, Telemetry tele) {
         try {
             // take in hardware map as param and then use that instead of our own
             this.motors[motorType.LEFTFRONT.ordinal()] = map.get(DcMotor.class, "frontLeft");
@@ -38,7 +53,12 @@ public class DriveMotorsAUTO {
             this.motors[motorType.RIGHTREAR.ordinal()] = map.get(DcMotor.class, "rearRight");
         } catch (Exception e) {
             throw new RuntimeException(new Throwable("Failed to init DriveMotors. Check connections or configuration naming"));
+        }
 
+        try {
+            this.camera = new Camera(map, tele);
+        } catch (Exception e) {
+            throw new RuntimeException(new Throwable("Failed to init Camera. Check connections or configuration naming"));
         }
 
 
@@ -55,14 +75,17 @@ public class DriveMotorsAUTO {
      @param distance Measures in Inches, + forward, - backwards
      */
     public void drive(double distance) {
-        this.Actions.add("drive:" + distance);
+
+        this.Actions.add(actionType.DRIVE);
+        this.ActionValues.add(distance);
     }
 
     /**
         @param degrees Using Degrees. + clockwise, - counter-clockwise
      */
     public void rotate(double degrees) {
-        this.Actions.add("rotate:" + degrees);
+        this.Actions.add(actionType.ROTATE);
+        this.ActionValues.add(degrees);
     }
 
     /**
@@ -70,9 +93,30 @@ public class DriveMotorsAUTO {
      * @param distance Measures in Inches. + left, - right
      */
     public void strafe(double distance) {
-        this.Actions.add("strafe:" + distance);
+        this.Actions.add(actionType.STRAFE);
+        this.ActionValues.add(distance);
     }
-    private void RUNdrive(double distance) {
+
+    /*
+        Detects april tag and then drives towards it
+     */
+    public void driveToTag() {
+
+
+        for (int i = 3; i > 0; i--) {
+            double[] DTS = this.camera.detectAprilTag();
+
+            this.Actions.add(actionType.ROTATE);
+            Actions.add(actionType.STRAFE);
+            Actions.add(actionType.DRIVE);
+
+            this.ActionValues.add(DTS[1] / i);
+            ActionValues.add(DTS[2] / i);
+            ActionValues.add(DTS[0] / i);
+
+        }
+    }
+    void RUNdrive(double distance) {
         for (DcMotor motor : motors) {
             motor.setTargetPosition(motor.getCurrentPosition() + (int) (ticksPerInch * distance));
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -82,7 +126,7 @@ public class DriveMotorsAUTO {
         }
     }
 
-    private void RUNstrafe(double distance) {
+    void RUNstrafe(double distance) {
         for (int i = 0; i <= motors.length - 1; i++) {
             DcMotor motor = motors[i];
             if (i % 2 == 0) {
@@ -91,10 +135,10 @@ public class DriveMotorsAUTO {
                 motor.setTargetPosition(motor.getCurrentPosition() - (int) (ticksPerInch * distance));
             }
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            motor.setPower(0.75);
+            motor.setPower(0.5);
         }
     }
-    private void RUNrotate(double degrees) {
+    void RUNrotate(double degrees) {
 
         for (DcMotor motor : motors) {
             if (motor.getDirection() == DcMotorSimple.Direction.REVERSE) {
@@ -115,15 +159,13 @@ public class DriveMotorsAUTO {
         while (index <= this.Actions.size() - 1) {
 
             if (!waiting) {
-                String action = this.Actions.get(index).split(":")[0];
-                double value = Double.parseDouble(this.Actions.get(index).split(":")[1]);
+                actionType action = Actions.get(index);
+                double value = this.ActionValues.get(index);
 
-                if (action.contains("rotate")) {
-                    this.RUNrotate(value);
-                } else if (action.contains("drive")) {
-                    this.RUNdrive(value);
-                } else if (action.contains("strafe")) {
-                    this.RUNstrafe(value);
+                switch (action) {
+                    case DRIVE: this.RUNdrive(value);
+                    case ROTATE: this.RUNrotate(value);
+                    case STRAFE: this.RUNstrafe(value);
                 }
                 waiting = true;
             } else if (reachedPosition()) {
@@ -134,7 +176,7 @@ public class DriveMotorsAUTO {
         this.Actions.clear();
     }
 
-    private boolean reachedPosition() {
+    boolean reachedPosition() {
         boolean flag = true;
         while(flag) {
             int motorsReachedPosition = 0;
