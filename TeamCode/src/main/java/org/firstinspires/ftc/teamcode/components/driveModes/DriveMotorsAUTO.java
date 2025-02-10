@@ -37,7 +37,15 @@ public class DriveMotorsAUTO {
         TAG
     }
 
-    enum RunModes {
+    /**<p>
+     * .SHORTESTPATH will optimise the actions at runtime to move to the same area in space using the shortest possible path.
+     * best for open areas with little to no obstacles. shortest path will not run driveToTag() (yet)
+     * </p>
+     * <p>
+     * .EXACT will run the actions exactly as specified at runtime. best for avoiding obstacles and using driveToTag()
+     *</p>
+     */
+    public enum RunModes {
         SHORTESTPATH,
         EXACT
     }
@@ -47,6 +55,12 @@ public class DriveMotorsAUTO {
 
     ArrayList<actionType> Actions = new ArrayList<actionType>();
 
+    /**
+     * <h1>Autonomous Drive Class</h1>
+     * <p>Main object for handling autonomous driving</p>
+     * @param map The HardwareMap object used in your AutoOPMode class
+     * @param tele the Telemetry object used in your AutoOPMode class
+     */
     public DriveMotorsAUTO(HardwareMap map, Telemetry tele) {
         try {
             // take in hardware map as param and then use that instead of our own
@@ -69,7 +83,8 @@ public class DriveMotorsAUTO {
     }
 
     /**
-     @param distance Measures in Inches, + forward, - backwards
+     * <p>Drives a certain distance on the y axis (forwards, backwards)</p>
+     @param distance Measures in Inches
      */
     public void drive(double distance) {
         this.Actions.add(actionType.DRIVE);
@@ -150,33 +165,68 @@ public class DriveMotorsAUTO {
     }
 
 
-
-    public void run() {
+    /**
+        @param mode the DriveMotorsAUTO.RunModes that dictates how this set of actions should be ran. See DriveMotorsAUTO.RunModes for a description of what they do
+     */
+    public void run(RunModes mode) {
         int index = 0;
         boolean waiting = false;
         actionType action;
         double value;
-        while (index <= Actions.size() - 1) {
+        this.RunMode = mode;
+        switch (mode) {
+            case EXACT:
+                while (index <= Actions.size() - 1) {
+                    action = Actions.get(index);
+                    value = ActionValues.get(index);
 
-            if (!waiting) {
-                action = Actions.get(index);
-                value  = ActionValues.get(index);
+                    switch (action) {
+                        case DRIVE : RUNdrive(value);
+                        case ROTATE: RUNrotate(value);
+                        case STRAFE: RUNstrafe(value);
+                        case TAG   : RUNdriveToTag();
+                    }
 
-                switch (action) {
-                    case DRIVE  :  RUNdrive(value);
-                    case ROTATE :  RUNrotate(value);
-                    case STRAFE :  RUNstrafe(value);
-                    case TAG    :  RUNdriveToTag();
+                    waitTillReachedPosition();
+                    index += 1;
                 }
-                waiting = true;
-            } else {
+
+
+            case SHORTESTPATH:
+
+                double totalRotation = 0;
+                double totalDrive = 0;
+                double totalStrafe = 0;
+
+                while (index <= Actions.size() - 1) {
+                    action = Actions.get(index);
+                    value = ActionValues.get(index);
+
+                    switch (action) {
+                        case DRIVE : totalDrive += value;
+                        case ROTATE: totalRotation += value;
+                        case STRAFE: totalStrafe += value;
+                    }
+                }
+
+                double degreesOfRotation  = (totalDrive) * ticksPerDegree;
+                double LFRR_diagonal      = (totalDrive - totalStrafe) * ticksPerInch;
+                double RFLR_diagonal      = (totalDrive + totalStrafe) * ticksPerInch;
+
+                setTargetPositions(new int[]{
+                        (int) (LFRR_diagonal + degreesOfRotation),
+                        (int) (LFRR_diagonal - degreesOfRotation),
+                        (int) (RFLR_diagonal - degreesOfRotation),
+                        (int) (RFLR_diagonal + degreesOfRotation),
+                });
+
+                runMotors();
                 waitTillReachedPosition();
-                waiting = false;
-                index += 1;
-            }
         }
         this.Actions.clear();
     }
+
+
 
     void waitTillReachedPosition() {
         while(true) {
