@@ -17,7 +17,7 @@ public class BigBertha {
     private final Telemetry tele;
     private double position;
 
-    //constructor
+    // constructor
     public BigBertha(HardwareMap map, Telemetry tele) {
         try {
 
@@ -35,7 +35,7 @@ public class BigBertha {
 
     /**
      * Takes control input and moves the hinge based on it.
-     * @param lift the control input
+     * @param {double} The control input
      */
     public void controls(double lift) {
         if (lift > 0.0D) {
@@ -73,6 +73,10 @@ public class BigBertha {
         this.grabber.setPosition(0.5D);
     }
 
+    /**
+     * Sets the position of the left and right arm hinge
+     * @param {double}
+     */
     public void setPosition(double pos) {
         this.position = pos;
         this.leftArmHinge.setPosition(position);

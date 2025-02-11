@@ -25,13 +25,15 @@ public class DriveTrain extends OpMode {
     }
 
     public void loop() {
+        // Initialize double values for gamepad stick angles
         double strafe = gamepad1.left_stick_x;
         double forward = -gamepad1.left_stick_y;
         double turn = gamepad1.right_stick_x;
-        //Handles driving
+
+        // Handles driving
         motors.controls(forward, strafe, turn, this.lift.isLiftUp());
 
-        //Handles BigBertha lowering and raising
+        // Handles BigBertha lowering and raising
         bigBertha.controls(-gamepad2.left_stick_y);
 
         // Controls grabber

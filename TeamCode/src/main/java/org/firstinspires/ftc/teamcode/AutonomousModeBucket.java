@@ -15,21 +15,12 @@ public class AutonomousModeBucket extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        //initializations
+        // initializations
         DriveMotorsAUTO motors = new DriveMotorsAUTO(hardwareMap, telemetry);
         BigBertha bertha = new BigBertha(hardwareMap, telemetry);
         LiftAUTO lift = new LiftAUTO(hardwareMap, telemetry);
 
         waitForStart();
-
-
-
-        /* old auto code 100% working
-        motors.drive(8);
-        motors.strafe(-45);
-        motors.rotate(45);
-        motors.run();
-        */
 
         // new auto code ¯\_(ツ)_/¯ if works yet
         motors.drive(5);
@@ -44,9 +35,11 @@ public class AutonomousModeBucket extends LinearOpMode {
         lift.lower();
         lift.run();
 
-
-
-
-
+        /* old auto code 100% working
+        motors.drive(8);
+        motors.strafe(-45);
+        motors.rotate(45);
+        motors.run();
+        */
     }
 }
