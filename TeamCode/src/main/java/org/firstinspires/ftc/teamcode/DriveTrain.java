@@ -16,7 +16,7 @@ public class DriveTrain extends OpMode {
     private BigBertha bigBertha;
 
     public void init() {
-        motors = new DriveMotorsTELE(hardwareMap);
+        motors = new DriveMotorsTELE(hardwareMap, telemetry);
         lift = new LiftTELE(hardwareMap, telemetry);
         bigBertha = new BigBertha(hardwareMap, telemetry);
 
@@ -30,33 +30,30 @@ public class DriveTrain extends OpMode {
         double forward = -gamepad1.left_stick_y;
         double turn = gamepad1.right_stick_x;
 
-        // Handles driving
-        motors.controls(forward, strafe, turn, this.lift.isLiftUp());
 
-        // Handles BigBertha lowering and raising
-        bigBertha.controls(-gamepad2.left_stick_y);
+        // If motors are doing auto ignore inputs
+        if(!motors.isBusy) {
 
-        // Controls grabber
-        if (gamepad2.left_bumper) {
-            bigBertha.grab();
-        } else if (gamepad2.right_bumper) {
-            bigBertha.eject();
-        } else {
-            bigBertha.stop();
+            // Handles driving
+            motors.controls(forward, strafe, turn);
+
+            // Handles BigBertha lowering and raising
+            bigBertha.controls(-gamepad2.left_stick_y);
+
+
+            // Controls grabber
+            if (gamepad2.left_bumper) {
+                bigBertha.grab();
+            } else if (gamepad2.right_bumper) {
+                bigBertha.eject();
+            } else {
+                bigBertha.stop();
+            }
+
+            if (gamepad1.x) {
+                motors.runAuto();
+            }
         }
-
-        // raises and lowers the lift. Make sure string is tight and on the inside of spool before running
-        if (gamepad2.x) {
-            lift.raise();
-        } else if (gamepad2.b) {
-            lift.lower(0.9);
-        }
-        if (gamepad2.right_trigger > 0.0F) {
-            lift.dump();
-        } else {
-            lift.resetBucket();
-        }
-
     }
 }
 
