@@ -4,9 +4,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.components.BigBertha;
 import org.firstinspires.ftc.teamcode.components.driveModes.DriveMotorsAUTO;
-import org.firstinspires.ftc.teamcode.components.lifts.LiftAUTO;
+
 
 @Autonomous(name = "Auto park")
 public class AutonomousModePark extends LinearOpMode {
@@ -15,7 +14,7 @@ public class AutonomousModePark extends LinearOpMode {
     public void runOpMode() {
 
         //  Motor hardware map initialization
-        DriveMotorsAUTO motors = new DriveMotorsAUTO(hardwareMap);
+        DriveMotorsAUTO motors = new DriveMotorsAUTO(hardwareMap, telemetry);
 
         waitForStart();
 
@@ -25,7 +24,7 @@ public class AutonomousModePark extends LinearOpMode {
 
         motors.rotate(-90);
         motors.drive(-4);
-        motors.run();
+        motors.run(DriveMotorsAUTO.RunModes.EXACT);
 
         //  Stops opMode from ending
         while(opModeIsActive()) {

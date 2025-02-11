@@ -28,7 +28,7 @@ public class AutonomousModeBucket extends LinearOpMode {
         motors.driveToTag();
         motors.rotate(-45);
         motors.drive(-2);
-        motors.run();
+        motors.run(DriveMotorsAUTO.RunModes.SHORTESTPATH);
 
         lift.raise();
         lift.dump();
