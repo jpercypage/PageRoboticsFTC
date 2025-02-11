@@ -25,7 +25,7 @@ public class LiftAUTO {
         DUMP,
     }
 
-    private ArrayList<actionType> Actions = new ArrayList<actionType>();
+    ArrayList<actionType> Actions = new ArrayList<actionType>();
     public LiftAUTO(HardwareMap map, Telemetry telemetry) {
         try {
             this.telemetry = telemetry;
@@ -64,7 +64,7 @@ public class LiftAUTO {
         this.Actions.add(actionType.LOWER);
     }
 
-    private void RUNraise() {
+    void RUNraise() {
 
         this.liftMotor.setTargetPosition(-3900);
         this.liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -72,18 +72,15 @@ public class LiftAUTO {
 
     }
 
-    private void RUNlower() {
+    void RUNlower() {
 
         this.liftMotor.setTargetPosition(0);
         this.liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.liftMotor.setPower(-0.9D);
     }
 
-    private void RUNdump() {
+    void RUNdump() {
         this.bucket.setPosition(1.0D);
-    }
-    private void resetBucket() {
-        this.bucket.setPosition(0.5D);
     }
 
     private boolean liftFinished() {

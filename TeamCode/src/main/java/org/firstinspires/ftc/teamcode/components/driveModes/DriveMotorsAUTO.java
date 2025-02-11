@@ -14,16 +14,16 @@ import utils.timer;
 public class DriveMotorsAUTO {
 
     final int ticksPerRev = 1120;
-    final double ticksPerInch = 1120 / 9.27636;
+    static final double ticksPerInch = 1120 / 9.27636;
 
-    double ticksPerDegree = 30.05;
+    static final double ticksPerDegree = 30.05;
 
     final int correctionScale = 3; // Higher number means better tag accuracy but slower code, lower number means worse tag accuracy but faster code
     final double MAXSPEED = 1;
     final int BufferZone = 50;
 
     final DcMotor[] motors = new DcMotor[4];
-    Camera camera = null;
+    Camera camera;
 
     int LEFTFRONT = 0;
     int RIGHTFRONT = 1;
@@ -45,7 +45,7 @@ public class DriveMotorsAUTO {
      * .EXACT will run the actions exactly as specified at runtime. best for avoiding obstacles and using driveToTag()
      *</p>
      */
-    public enum RunModes {
+    public static enum RunModes {
         SHORTESTPATH,
         EXACT
     }
@@ -228,7 +228,7 @@ public class DriveMotorsAUTO {
 
 
 
-    void waitTillReachedPosition() {
+    private void waitTillReachedPosition() {
         while(true) {
             int motorsReachedPosition = 0;
             for(DcMotor motor : motors) {
@@ -244,21 +244,21 @@ public class DriveMotorsAUTO {
         }
     }
 
-    void setTargetPositions(int[] d) {
+    private void setTargetPositions(int[] d) {
         this.motors[LEFTFRONT]  .setTargetPosition(this.motors[LEFTFRONT]  .getCurrentPosition() + d[0]);
         this.motors[RIGHTFRONT] .setTargetPosition(this.motors[RIGHTFRONT] .getCurrentPosition() + d[1]);
         this.motors[RIGHTREAR]  .setTargetPosition(this.motors[RIGHTREAR]  .getCurrentPosition() + d[2]);
         this.motors[LEFTREAR]   .setTargetPosition(this.motors[LEFTREAR]   .getCurrentPosition() + d[3]);
     }
 
-    void runMotors(double speed) {
+    private void runMotors(double speed) {
         for (DcMotor motor : motors) {
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motor.setPower(speed);
         }
     }
 
-    void runMotors() {
+    private void runMotors() {
         for (DcMotor motor : motors) {
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motor.setPower(MAXSPEED);
