@@ -1,14 +1,9 @@
 package org.firstinspires.ftc.teamcode.components.driveModes;
 
-import static org.firstinspires.ftc.teamcode.components.driveModes.DriveMotorsAUTO.ticksPerDegree;
-import static org.firstinspires.ftc.teamcode.components.driveModes.DriveMotorsAUTO.ticksPerInch;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.components.Camera;
 import org.firstinspires.ftc.teamcode.components.lifts.LiftAUTO;
 
 
@@ -43,6 +38,12 @@ public class DriveMotorsTELE {
      * @param turn    -1.00 = rotate left. : 1.00 = rotate right.
      */
     public void controls(double forward, double strafe, double turn) {
+
+        for (DcMotor motor : this.motors) {
+            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+
+
         this.motors[LEFTFRONT]  .setPower((forward + strafe + turn) * SPEED);
         this.motors[RIGHTFRONT] .setPower((forward - strafe - turn) * SPEED);
         this.motors[RIGHTREAR]  .setPower((forward + strafe - turn) * SPEED);
