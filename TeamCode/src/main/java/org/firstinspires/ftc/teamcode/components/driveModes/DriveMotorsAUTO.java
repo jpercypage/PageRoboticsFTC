@@ -77,8 +77,9 @@ public class DriveMotorsAUTO {
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
 
-        motors[RIGHTFRONT].setDirection(DcMotorSimple.Direction.REVERSE);
+        motors[LEFTFRONT].setDirection(DcMotorSimple.Direction.REVERSE);
         motors[RIGHTREAR].setDirection(DcMotorSimple.Direction.REVERSE);
+        
 
     }
 
