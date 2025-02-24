@@ -19,13 +19,17 @@ public class DriveMotorsTELE {
     private int RIGHTREAR = 2;
     private int LEFTREAR = 3;
 
+    private double Buffer = 0.02;
     private double SPEED = 0.5;
     public boolean isBusy = false;
     DcMotor[] motors;
     private final DriveMotorsAUTO driveModeAuto;
     private final LiftAUTO liftAUTO;
 
-
+    private double LEFTFRONTPOW = 0;
+    private double RIGHTFRONTPOW = 0;
+    private double RIGHTREARPOW = 0;
+    private double LEFTREARPOW = 0;
     public DriveMotorsTELE(HardwareMap map, Telemetry tele) {
 
         this.driveModeAuto = new DriveMotorsAUTO(map, tele);
@@ -33,6 +37,25 @@ public class DriveMotorsTELE {
         this.motors = this.driveModeAuto.motors;
 
     }
+
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        long factor = (long) Math.pow(10, places);
+        value = value * factor;
+        long tmp = Math.round(value);
+        return (double) tmp / factor;
+    }
+
+
+    public double closeZero(double speed1, double speed2, double speed3) {
+        if (speed3 == 0) {
+            return 0;
+        }
+        return Math.abs(speed1) > Math.abs(speed2) ? round(speed2, 2) : round(speed1, 2);
+    }
+
 
 
     /**
@@ -43,6 +66,19 @@ public class DriveMotorsTELE {
      * @param turn    -1.00 = rotate left. : 1.00 = rotate right.
      */
     public void controls(double forward, double strafe, double turn) {
+
+        if ((forward + strafe + turn) > -0.05 && (forward + strafe + turn) < 0.05) {
+            LEFTFRONTPOW += ((forward + strafe + turn) * SPEED) * Buffer;
+            RIGHTFRONTPOW += ((forward - strafe - turn) * SPEED) * Buffer;
+            RIGHTREARPOW += ((forward + strafe - turn) * SPEED) * Buffer;
+            LEFTREARPOW += ((forward - strafe + turn) * SPEED) * Buffer;
+        } else {
+            LEFTFRONTPOW += closeZero(LEFTFRONTPOW - Buffer, LEFTFRONTPOW + Buffer, LEFTFRONTPOW);
+            RIGHTFRONTPOW += closeZero(RIGHTFRONTPOW - Buffer, RIGHTFRONTPOW + Buffer, RIGHTFRONTPOW);
+            RIGHTREARPOW += closeZero(RIGHTREARPOW - Buffer, RIGHTREARPOW + Buffer, RIGHTREARPOW);
+            LEFTREARPOW += closeZero(LEFTREARPOW - Buffer, LEFTREARPOW + Buffer, LEFTREARPOW);
+        }
+
         this.motors[LEFTFRONT]  .setPower((forward + strafe + turn) * SPEED);
         this.motors[RIGHTFRONT] .setPower((forward - strafe - turn) * SPEED);
         this.motors[RIGHTREAR]  .setPower((forward + strafe - turn) * SPEED);
