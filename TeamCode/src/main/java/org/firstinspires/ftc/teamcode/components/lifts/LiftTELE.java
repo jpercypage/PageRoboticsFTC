@@ -19,15 +19,14 @@ public class LiftTELE {
      */
     public void raise() {
 
-        lift.RUNraise();
+        this.lift.RUNraise();
     }
 
     /**
      * lowers the lift to the bottom
      */
     public void lower() {
-
-       lift.RUNlower();
+       this.lift.RUNlower();
     }
 
     /**

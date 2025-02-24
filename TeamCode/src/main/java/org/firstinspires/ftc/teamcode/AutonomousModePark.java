@@ -18,17 +18,8 @@ public class AutonomousModePark extends LinearOpMode {
 
         waitForStart();
 
-        motors.drive(5);
-        motors.rotate(90);
-        motors.drive(38);
-
-        motors.rotate(-90);
-        motors.drive(-4);
+        motors.driveToTag();
         motors.run(DriveMotorsAUTO.RunModes.EXACT);
 
-        //  Stops opMode from ending
-        while(opModeIsActive()) {
-            int three = 1 + 1;
-        }
     }
 }

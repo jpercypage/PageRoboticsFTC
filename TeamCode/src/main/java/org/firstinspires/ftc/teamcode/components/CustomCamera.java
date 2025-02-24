@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.components;
 
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -17,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 import utils.timer;
 
-public class Camera {
+public class CustomCamera {
 
     final double DESIRED_DISTANCE = 4.0; // inches
 
@@ -34,7 +33,7 @@ public class Camera {
     private VisionPortal visionPortal;
     private AprilTagProcessor aprilTag;
 
-    public Camera(HardwareMap map, Telemetry tele) {
+    public CustomCamera(HardwareMap map, Telemetry tele) {
         this.map = map;
         this.tele = tele;
 
@@ -51,12 +50,10 @@ public class Camera {
         this.visionPortal = new VisionPortal.Builder()
                 .setCamera(map.get(WebcamName.class, "webcam"))
                 .addProcessor(aprilTag)
-                .enableLiveView(true)
                 .setAutoStartStreamOnBuild(true)
-                .setShowStatsOverlay(true)
                 .build();
 
-
+        /**
         // Make sure camera is streaming before we try to set the exposure controls
         if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
             while (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
@@ -79,7 +76,8 @@ public class Camera {
         gainControl.setGain(6);
         timer.waitish(0.02);
 
-
+        */
+        visionPortal.setProcessorEnabled(aprilTag, true);
     }
 
     public double[] detectAprilTag() {
