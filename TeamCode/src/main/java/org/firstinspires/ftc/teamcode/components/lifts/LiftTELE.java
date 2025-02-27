@@ -34,6 +34,5 @@ public class LiftTELE {
      */
     public void dump() {
         lift.RUNdump();
-        timer.waitish(1.5);
     }
 }

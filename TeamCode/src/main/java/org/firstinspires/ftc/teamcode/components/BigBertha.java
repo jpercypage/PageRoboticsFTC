@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.components;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -10,8 +11,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class BigBertha {
 
-    private final Servo leftArmHinge;
-    private final Servo rightArmHinge;
+    public final DcMotor hinge;
     private final Servo grabber;
 
     private final Telemetry tele;
@@ -21,15 +21,14 @@ public class BigBertha {
     public BigBertha(HardwareMap map, Telemetry tele) {
         try {
 
-            this.leftArmHinge = map.get(Servo.class, "lHinge");
-            this.rightArmHinge = map.get(Servo.class, "rHinge");
+            this.hinge = map.get(DcMotor.class,"hinge");
             this.grabber = map.get(Servo.class, "grabber");
 
         } catch (Exception e) {
             throw new RuntimeException(new Throwable("Failed to init BigBertha. Check connections or configuration naming"));
         }
         this.tele = tele;
-        this.position = this.leftArmHinge.getPosition();
+      this.hinge.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
     }
 
@@ -47,11 +46,20 @@ public class BigBertha {
 
         if (lift != 0.0D) {
             this.position = Math.max(0.3D, Math.min(0.8D, position));
-            this.leftArmHinge.setPosition(position);
-            this.rightArmHinge.setPosition(position);
         }
     }
 
+    public void deploy() {
+        this.hinge.setTargetPosition(-75);
+        this.hinge.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.hinge.setPower(0.2);
+    }
+    public void retract() {
+        this.hinge.setTargetPosition(0);
+        this.hinge.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.hinge.setPower(1);
+
+    }
     /**
      * Grabs a block
      */
@@ -79,8 +87,7 @@ public class BigBertha {
      */
     public void setPosition(double pos) {
         this.position = pos;
-        this.leftArmHinge.setPosition(position);
-        this.rightArmHinge.setPosition(position);
+
     }
 }
 

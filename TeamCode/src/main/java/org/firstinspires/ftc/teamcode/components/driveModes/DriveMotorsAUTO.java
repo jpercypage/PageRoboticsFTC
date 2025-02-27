@@ -19,11 +19,11 @@ public class DriveMotorsAUTO {
     static final double ticksPerDegree = 30.05;
 
     final int correctionScale = 3; // Higher number means better tag accuracy but slower code, lower number means worse tag accuracy but faster code
-    final double MAXSPEED = 0.5;
+    final double MAXSPEED = 1;
     final int BufferZone = 50;
 
     final DcMotor[] motors = new DcMotor[4];
-    CustomCamera customCamera;
+    CustomCamera camera;
 
     int LEFTFRONT = 0;
     int RIGHTFRONT = 1;
@@ -68,7 +68,7 @@ public class DriveMotorsAUTO {
             this.motors[RIGHTFRONT] = map.get(DcMotor.class, "frontRight");
             this.motors[LEFTREAR] = map.get(DcMotor.class, "rearLeft");
             this.motors[RIGHTREAR] = map.get(DcMotor.class, "rearRight");
-            this.customCamera = new CustomCamera(map, tele);
+            //this.camera = new Camera(map, tele);
         } catch (Exception e) {
             throw new RuntimeException(new Throwable("Failed to init DriveMotors. Check connections or configuration naming"));
         }
@@ -77,9 +77,8 @@ public class DriveMotorsAUTO {
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
 
-        motors[LEFTFRONT].setDirection(DcMotorSimple.Direction.REVERSE);
+        motors[RIGHTFRONT].setDirection(DcMotorSimple.Direction.REVERSE);
         motors[RIGHTREAR].setDirection(DcMotorSimple.Direction.REVERSE);
-        
 
     }
 
@@ -124,7 +123,7 @@ public class DriveMotorsAUTO {
         int leftRearDistance;
 
         for (int correction = correctionScale; correction >= correctionScale; correction--) {
-            double[] DTS = this.customCamera.detectAprilTag();
+            double[] DTS = this.camera.detectAprilTag();
 
             double degreesOfRotation  = (DTS[2] / correction) * ticksPerDegree;
             double LFRR_diagonal      = ((DTS[0] - DTS[3]) / correction) * ticksPerInch;
@@ -177,7 +176,7 @@ public class DriveMotorsAUTO {
         this.RunMode = mode;
         switch (mode) {
             case EXACT:
-                while (index <= Actions.size() - 2) {
+                while (index <= Actions.size() - 1) {
                     action = Actions.get(index);
                     value = ActionValues.get(index);
 

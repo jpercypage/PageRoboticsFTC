@@ -26,19 +26,20 @@ public class DriveTrain extends OpMode {
 
     public void loop() {
         // Initialize double values for gamepad stick angles
+
         double strafe = gamepad1.left_stick_x;
         double forward = -gamepad1.left_stick_y;
         double turn = gamepad1.right_stick_x;
 
 
         // If motors are doing auto ignore inputs
-        if(!motors.isBusy) {
+//        if(!motors.isBusy) {
 
             // Handles driving
             motors.controls(forward, strafe, turn);
 
             // Handles BigBertha lowering and raising
-            bigBertha.controls(-gamepad2.left_stick_y);
+
 
 
             // Controls grabber
@@ -50,11 +51,29 @@ public class DriveTrain extends OpMode {
                 bigBertha.stop();
             }
 
-            if (gamepad1.x) {
-                motors.runAuto();
+//            if (gamepad1.x) {
+//                motors.runAuto();
+//            }
+
+            if (gamepad2.y){
+                lift.raise();
             }
-        }
+
+            else if(gamepad2.x){
+                lift.lower();
+
+            }
+            if(gamepad2.dpad_up) {
+                bigBertha.retract();
+            }
+            else if(gamepad2.dpad_down){
+                bigBertha.deploy();
+            }
+            else if (gamepad2.a)
+                lift.dump();
+            }
+//        }
     }
-}
+
 
 

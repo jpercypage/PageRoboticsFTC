@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+
 @TeleOp(
         name = "Hinge Test"
 )
@@ -20,7 +24,6 @@ public class Tester extends OpMode {
         
         if(position == 0) {
             lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            sleep(20);
         }
 
         telemetry.addData("Position", lift.getCurrentPosition());
